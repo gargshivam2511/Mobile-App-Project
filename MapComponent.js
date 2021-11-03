@@ -12,7 +12,8 @@ export default class MapComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			tracks: []
+			tracks: [],
+			selectedTrackName: ""
 		};
 	}
 
@@ -22,9 +23,19 @@ export default class MapComponent extends Component {
 				this.state.tracks.map((track) => track.name)
 		);
 
-		return this.state.tracks.map((track) => (
-			<TrackComponent key={track.name} track={track} />
-		));
+		return this.state.tracks.map((track) => {
+			let shouldHighlight = track.name == this.state.selectedTrackName;
+			return (
+				<TrackComponent
+					key={track.name}
+					track={track}
+					color={shouldHighlight ? "red" : "blue"}
+					onPress={() => {
+						this.setState({ selectedTrackName: track.name });
+					}}
+				/>
+			);
+		});
 	}
 
 	render() {

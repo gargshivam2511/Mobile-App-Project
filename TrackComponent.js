@@ -17,12 +17,13 @@ export default class TrackComponent extends Component {
 						longitude: point.lon
 					};
 				})}
-				strokeColor="blue"
+				strokeColor={this.props.color}
 				strokeWidth={4}
 				tappable={true}
-				onPress={(e) =>
-					Alert.alert("Track pressed", "Track Name: " + this.props.track.name)
-				}
+				onPress={() => {
+					this.props.onPress();
+					Alert.alert("Track pressed", "Track Name: " + this.props.track.name);
+				}}
 			/>
 		);
 	}
