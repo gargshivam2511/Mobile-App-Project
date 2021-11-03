@@ -2,21 +2,17 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MapView from "react-native-maps";
+import { Marker } from "react-native-maps";
+// import gpxParser from "gpxparser";
+import MapComponent from "./MapComponent";
 
 const windowHeight = Dimensions.get("window").height;
 
 export default function App() {
+	// var track = parseGpx(gpxContent);
 	return (
-		<View style={styles.container}>
-			<MapView
-				style={styles.map}
-				initialRegion={{
-					latitude: 49.25,
-					longitude: -123.1,
-					latitudeDelta: 0.2,
-					longitudeDelta: 0.2
-				}}
-			/>
+		<View>
+			<MapComponent />
 		</View>
 	);
 }
