@@ -32,6 +32,7 @@ export default class MapComponent extends Component {
 			<View style={styles.container}>
 				<MapView
 					style={styles.map}
+					//TODO: Replace with current location
 					initialRegion={{
 						latitude: 49.25,
 						longitude: -123.1,

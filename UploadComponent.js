@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 		backgroundColor: "rgba(0, 0, 0, 0.60)",
 		color: "white",
-		width: "10%",
-		alignContent: "center"
+		textAlign: "center",
+		maxWidth: "10%"
 	}
 });
