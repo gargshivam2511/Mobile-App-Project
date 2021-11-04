@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Alert } from "react-native";
 import { Polyline } from "react-native-maps";
 
 export default class TrackComponent extends Component {
@@ -23,7 +22,6 @@ export default class TrackComponent extends Component {
 				tappable={true}
 				onPress={() => {
 					this.props.onPress();
-					Alert.alert("Track pressed", "Track Name: " + this.props.track.name);
 				}}
 			/>
 		);

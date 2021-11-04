@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
@@ -31,8 +31,6 @@ export default class MapComponent extends Component {
 				this.state.tracks.map((track) => track.name)
 		);
 
-		console.log(this.state.tracks);
-
 		return this.state.tracks.map((track) => {
 			let shouldHighlight = track.name == this.state.selectedTrackName;
 			return (
@@ -42,10 +40,63 @@ export default class MapComponent extends Component {
 					color={shouldHighlight ? "red" : "blue"}
 					onPress={() => {
 						this.setState({ selectedTrackName: track.name });
+						Alert.alert(
+							track.name,
+							"Do you want to delete " + track.name + "?",
+							[
+								{
+									text: "Yes",
+									onPress: () => {
+										this.removeTrack(track);
+									}
+								},
+								{ text: "No" }
+							]
+						);
 					}}
 				/>
 			);
 		});
+	}
+
+	addTracks(tracks) {
+		//Copy the state.tracks and then add the new track(s)
+		var tracksCopy = [...this.state.tracks];
+		tracks.forEach((track) => {
+			tracksCopy.push(track);
+		});
+
+		//Remove duplicate tracks based on track name
+		tracksCopy = tracksCopy.filter((track, index) => {
+			return (
+				tracksCopy.findIndex((otherTrack) => {
+					return otherTrack.name == track.name;
+				}) == index
+			);
+		});
+
+		this.updateTracksState(tracksCopy);
+	}
+
+	removeTrack(track) {
+		var tracksCopy = [...this.state.tracks];
+		tracksCopy.forEach((trackToCheck, index) => {
+			if (track.name === trackToCheck.name) {
+				tracksCopy.splice(index, 1);
+			}
+		});
+
+		this.updateTracksState(tracksCopy);
+	}
+
+	//Update state and write to storage
+	updateTracksState(newTracks) {
+		this.setState({ tracks: newTracks });
+		try {
+			AsyncStorage.setItem("tracks", JSON.stringify(newTracks)).then(() => {});
+		} catch (e) {
+			console.log(e);
+		}
 	}
 
 	render() {
@@ -69,30 +120,7 @@ export default class MapComponent extends Component {
 				<UploadComponent
 					onFileRead={(data) => {
 						parseGpx(data, (tracks) => {
-							//Copy the state.tracks and then add the new track(s)
-							var tracksCopy = [...this.state.tracks];
-							tracks.forEach((track) => {
-								tracksCopy.push(track);
-							});
-
-							//Remove duplicate tracks based on track name
-							tracksCopy = tracksCopy.filter((track, index) => {
-								return (
-									tracksCopy.findIndex((otherTrack) => {
-										return otherTrack.name == track.name;
-									}) == index
-								);
-							});
-
-							this.setState({ tracks: tracksCopy });
-
-							try {
-								AsyncStorage.setItem("tracks", JSON.stringify(tracksCopy)).then(
-									() => {}
-								);
-							} catch (e) {
-								console.log(e);
-							}
+							this.addTracks(tracks);
 						});
 					}}
 				/>
