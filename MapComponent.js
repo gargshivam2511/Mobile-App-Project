@@ -4,6 +4,7 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -15,6 +16,13 @@ export default class MapComponent extends Component {
 			tracks: [],
 			selectedTrackName: ""
 		};
+
+		AsyncStorage.getItem("tracks").then((tracks) => {
+			if (tracks != null) {
+				console.log(tracks);
+				this.setState({ tracks: JSON.parse(tracks) });
+			}
+		});
 	}
 
 	renderTracks() {
@@ -22,6 +30,8 @@ export default class MapComponent extends Component {
 			"Displaying the following tracks: " +
 				this.state.tracks.map((track) => track.name)
 		);
+
+		console.log(this.state.tracks);
 
 		return this.state.tracks.map((track) => {
 			let shouldHighlight = track.name == this.state.selectedTrackName;
@@ -75,6 +85,14 @@ export default class MapComponent extends Component {
 							});
 
 							this.setState({ tracks: tracksCopy });
+
+							try {
+								AsyncStorage.setItem("tracks", JSON.stringify(tracksCopy)).then(
+									() => {}
+								);
+							} catch (e) {
+								console.log(e);
+							}
 						});
 					}}
 				/>
