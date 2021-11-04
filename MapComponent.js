@@ -19,7 +19,6 @@ export default class MapComponent extends Component {
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
 			if (tracks != null) {
-				console.log(tracks);
 				this.setState({ tracks: JSON.parse(tracks) });
 			}
 		});
