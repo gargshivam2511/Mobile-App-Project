@@ -19,7 +19,10 @@ export default class UploadComponent extends Component {
 
 	render() {
 		return (
-			<TouchableHighlight onPress={() => this.selectFile()}>
+			<TouchableHighlight
+				underlayColor="rgba(0, 0, 0, 0)"
+				onPress={() => this.selectFile()}
+			>
 				<Text style={styles.buttonText}>+</Text>
 			</TouchableHighlight>
 		);
