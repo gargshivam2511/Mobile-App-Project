@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
@@ -42,7 +42,9 @@ export default class MapComponent extends Component {
 		return (
 			<View style={styles.container}>
 				<MapView
+					provider={PROVIDER_GOOGLE}
 					style={styles.map}
+					showsUserLocation={true}
 					//TODO: Replace with current location
 					initialRegion={{
 						latitude: 49.25,
