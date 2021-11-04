@@ -17,6 +17,7 @@ export default class TrackComponent extends Component {
 						longitude: point.lon
 					};
 				})}
+				lineDashPattern={[1]}
 				strokeColor={this.props.color}
 				strokeWidth={4}
 				tappable={true}

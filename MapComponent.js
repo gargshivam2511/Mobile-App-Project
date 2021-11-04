@@ -51,41 +51,38 @@ export default class MapComponent extends Component {
 						longitudeDelta: 0.2
 					}}
 				>
-					<UploadComponent
-						onFileRead={(data) => {
-							parseGpx(data, (tracks) => {
-								//Copy the state.tracks and then add the new track(s)
-								var tracksCopy = [...this.state.tracks];
-								tracks.forEach((track) => {
-									tracksCopy.push(track);
-								});
-
-								//Remove duplicate tracks based on track name
-								tracksCopy = tracksCopy.filter((track, index) => {
-									return (
-										tracksCopy.findIndex((otherTrack) => {
-											return otherTrack.name == track.name;
-										}) == index
-									);
-								});
-
-								this.setState({ tracks: tracksCopy });
-							});
-						}}
-					/>
-
 					{this.renderTracks()}
 				</MapView>
+
+				<UploadComponent
+					onFileRead={(data) => {
+						parseGpx(data, (tracks) => {
+							//Copy the state.tracks and then add the new track(s)
+							var tracksCopy = [...this.state.tracks];
+							tracks.forEach((track) => {
+								tracksCopy.push(track);
+							});
+
+							//Remove duplicate tracks based on track name
+							tracksCopy = tracksCopy.filter((track, index) => {
+								return (
+									tracksCopy.findIndex((otherTrack) => {
+										return otherTrack.name == track.name;
+									}) == index
+								);
+							});
+
+							this.setState({ tracks: tracksCopy });
+						});
+					}}
+				/>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {
-		alignItems: "center",
-		justifyContent: "center"
-	},
+	container: {},
 	map: {
 		...StyleSheet.absoluteFillObject,
 		height: windowHeight
