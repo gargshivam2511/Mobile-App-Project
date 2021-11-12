@@ -1,20 +1,47 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import {
+	View,
+	StyleSheet,
+	Dimensions,
+	Alert,
+	PermissionsAndroid
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
+// import * as TaskManager from "expo-task-manager";
+import GpxTrack from "./GpxTrack";
+import GpxSegment from "./GpxSegment";
+import GpxPoint from "./GpxPoint";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+
+// const LOCATION_TASK_NAME = "background-location-task";
+// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+// 	if (error) {
+// 		console.log("LOCATION_TASK_NAME task ERROR:", error);
+
+// 		return;
+// 	}
+
+// 	if (data) {
+// 		const { locations } = data;
+
+// 		console.log(locations);
+// 	}
+// });
 
 export default class MapComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			tracks: [],
-			selectedTrackName: ""
+			selectedTrackName: "",
+			userTrack: new GpxTrack("user track", [new GpxSegment([])])
 		};
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
@@ -23,6 +50,32 @@ export default class MapComponent extends Component {
 			}
 		});
 	}
+
+	componentDidMount() {
+		this.locationTracking();
+	}
+
+	locationTracking = async () => {
+		//TODO: Check response to confirm that permissions accepted
+		await Location.requestForegroundPermissionsAsync();
+
+		Location.watchPositionAsync(
+			{
+				accuracy: Location.Accuracy.Highest,
+				showsBackgroundLocationIndicator: true,
+				timeInterval: 5000,
+				activityType: Location.ActivityType.Fitness,
+				distanceInterval: 20
+			},
+			(location) => {
+				var trackCopy = this.state.userTrack;
+				trackCopy.segments[0].points.push(
+					new GpxPoint(location.coords.latitude, location.coords.longitude)
+				);
+				this.setState({ userTrack: trackCopy });
+			}
+		);
+	};
 
 	renderTracks() {
 		console.log(
@@ -99,12 +152,14 @@ export default class MapComponent extends Component {
 	}
 
 	render() {
+		console.log(this.state.userTrack);
 		return (
 			<View style={styles.container}>
 				<MapView
 					provider={PROVIDER_GOOGLE}
 					style={styles.map}
 					showsUserLocation={true}
+					mapType="satellite"
 					//TODO: Replace with current location
 					initialRegion={{
 						latitude: 49.25,
@@ -114,6 +169,12 @@ export default class MapComponent extends Component {
 					}}
 				>
 					{this.renderTracks()}
+
+					<TrackComponent
+						key={this.state.userTrack.name}
+						track={this.state.userTrack}
+						color="green"
+					/>
 				</MapView>
 
 				<UploadComponent
