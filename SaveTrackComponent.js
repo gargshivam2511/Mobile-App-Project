@@ -12,7 +12,6 @@ export default class SaveTrackComponent extends Component {
 	}
 
 	render() {
-		console.log(this.state.step);
 		return (
 			<View>
 				{this.state.step == saveSteps.notTracking && (
