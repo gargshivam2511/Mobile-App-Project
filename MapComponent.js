@@ -4,7 +4,8 @@ import {
 	StyleSheet,
 	Dimensions,
 	Alert,
-	PermissionsAndroid
+	TouchableHighlight,
+	Text
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx } from "./GpxParser";
@@ -12,28 +13,13 @@ import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-// import * as TaskManager from "expo-task-manager";
 import GpxTrack from "./GpxTrack";
 import GpxSegment from "./GpxSegment";
 import GpxPoint from "./GpxPoint";
+import SaveTrackComponent from "./SaveTrackComponent";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-// const LOCATION_TASK_NAME = "background-location-task";
-// TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
-// 	if (error) {
-// 		console.log("LOCATION_TASK_NAME task ERROR:", error);
-
-// 		return;
-// 	}
-
-// 	if (data) {
-// 		const { locations } = data;
-
-// 		console.log(locations);
-// 	}
-// });
 
 export default class MapComponent extends Component {
 	constructor(props) {
@@ -41,7 +27,10 @@ export default class MapComponent extends Component {
 		this.state = {
 			tracks: [],
 			selectedTrackName: "",
-			userTrack: new GpxTrack("user track", [new GpxSegment([])])
+			canTrack: false,
+			isTracking: false,
+			userTrack: new GpxTrack("user track", [new GpxSegment([])]),
+			trackNameDialogVisible: false
 		};
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
@@ -49,17 +38,20 @@ export default class MapComponent extends Component {
 				this.setState({ tracks: JSON.parse(tracks) });
 			}
 		});
+
+		//Request location permissions if the app doesn't already have it.
+		//If permissions are denied, then the ability to track your
+		//route will be hidden
+		Location.requestForegroundPermissionsAsync().then((response) => {
+			if (response.granted) {
+				this.setState({ canTrack: true });
+			}
+		});
 	}
 
-	componentDidMount() {
-		this.locationTracking();
-	}
-
-	locationTracking = async () => {
-		//TODO: Check response to confirm that permissions accepted
-		await Location.requestForegroundPermissionsAsync();
-
-		Location.watchPositionAsync(
+	startTracking = async () => {
+		this.setState({ isTracking: true });
+		this.tracker = await Location.watchPositionAsync(
 			{
 				accuracy: Location.Accuracy.Highest,
 				showsBackgroundLocationIndicator: true,
@@ -76,6 +68,10 @@ export default class MapComponent extends Component {
 			}
 		);
 	};
+
+	stopTracking() {
+		this.tracker.remove();
+	}
 
 	renderTracks() {
 		console.log(
@@ -118,6 +114,7 @@ export default class MapComponent extends Component {
 			tracksCopy.push(track);
 		});
 
+		console.log(tracksCopy);
 		//Remove duplicate tracks based on track name
 		tracksCopy = tracksCopy.filter((track, index) => {
 			return (
@@ -152,14 +149,13 @@ export default class MapComponent extends Component {
 	}
 
 	render() {
-		console.log(this.state.userTrack);
 		return (
 			<View style={styles.container}>
 				<MapView
 					provider={PROVIDER_GOOGLE}
 					style={styles.map}
 					showsUserLocation={true}
-					mapType="satellite"
+					mapType="standard"
 					//TODO: Replace with current location
 					initialRegion={{
 						latitude: 49.25,
@@ -184,6 +180,29 @@ export default class MapComponent extends Component {
 						});
 					}}
 				/>
+
+				{this.state.canTrack && (
+					<SaveTrackComponent
+						onStart={() => {
+							this.startTracking();
+						}}
+						onDiscard={() => {
+							this.stopTracking();
+							this.setState({
+								userTrack: new GpxTrack("user track", [new GpxSegment([])])
+							});
+						}}
+						onSave={(trackName) => {
+							this.stopTracking();
+							let trackToSave = this.state.userTrack;
+							trackToSave.name = trackName;
+							this.addTracks([trackToSave]);
+							this.setState({
+								userTrack: new GpxTrack("user track", [new GpxSegment([])])
+							});
+						}}
+					/>
+				)}
 			</View>
 		);
 	}
@@ -194,5 +213,15 @@ const styles = StyleSheet.create({
 	map: {
 		...StyleSheet.absoluteFillObject,
 		height: windowHeight
+	},
+	buttonText: {
+		fontSize: 24,
+		padding: 5,
+		marginTop: 20,
+		marginLeft: 5,
+		backgroundColor: "rgba(0, 0, 0, 0.60)",
+		color: "white",
+		textAlign: "center",
+		maxWidth: "20%"
 	}
 });
