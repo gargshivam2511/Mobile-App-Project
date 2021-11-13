@@ -43,6 +43,12 @@ export default class SaveTrackComponent extends Component {
 						<Dialog.Title>Do you want to save this track?</Dialog.Title>
 						<Dialog.Description />
 						<Dialog.Button
+							label="Cancel"
+							onPress={() => {
+								this.setState({ step: saveSteps.tracking });
+							}}
+						/>
+						<Dialog.Button
 							label="Discard"
 							onPress={() => {
 								this.setState({ step: saveSteps.notTracking });
