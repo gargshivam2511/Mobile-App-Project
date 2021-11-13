@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, TouchableHighlight, StyleSheet } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
+import CommonStyleSheet from "./CommonStyleSheet";
 
 export default class UploadComponent extends Component {
 	constructor(props) {
@@ -25,24 +26,11 @@ export default class UploadComponent extends Component {
 	render() {
 		return (
 			<TouchableHighlight
-				underlayColor="rgba(0, 0, 0, 0)"
+				style={CommonStyleSheet.button}
 				onPress={() => this.selectFile()}
 			>
-				<Text style={styles.buttonText}>+</Text>
+				<Text style={CommonStyleSheet.buttonText}>+</Text>
 			</TouchableHighlight>
 		);
 	}
 }
-
-const styles = StyleSheet.create({
-	buttonText: {
-		fontSize: 24,
-		padding: 5,
-		marginTop: 20,
-		marginLeft: 5,
-		backgroundColor: "rgba(0, 0, 0, 0.60)",
-		color: "white",
-		textAlign: "center",
-		maxWidth: "10%"
-	}
-});

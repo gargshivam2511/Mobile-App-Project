@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, TouchableHighlight } from "react-native";
+import { View, Text, TouchableHighlight } from "react-native";
 import Dialog from "react-native-dialog";
+import CommonStyleSheet from "./CommonStyleSheet";
 
 export default class SaveTrackComponent extends Component {
 	constructor(props) {
@@ -16,24 +17,24 @@ export default class SaveTrackComponent extends Component {
 			<View>
 				{this.state.step == saveSteps.notTracking && (
 					<TouchableHighlight
-						underlayColor="rgba(0, 0, 0, 0)"
+						style={CommonStyleSheet.button}
 						onPress={() => {
 							this.setState({ step: saveSteps.tracking });
 							this.props.onStart();
 						}}
 					>
-						<Text style={styles.buttonText}>Start</Text>
+						<Text style={CommonStyleSheet.buttonText}>Start</Text>
 					</TouchableHighlight>
 				)}
 
 				{this.state.step == saveSteps.tracking && (
 					<TouchableHighlight
-						underlayColor="rgba(0, 0, 0, 0)"
+						style={CommonStyleSheet.button}
 						onPress={() => {
 							this.setState({ step: saveSteps.askForSave });
 						}}
 					>
-						<Text style={styles.buttonText}>Stop</Text>
+						<Text style={CommonStyleSheet.buttonText}>Stop</Text>
 					</TouchableHighlight>
 				)}
 
@@ -86,19 +87,6 @@ export default class SaveTrackComponent extends Component {
 		);
 	}
 }
-
-const styles = StyleSheet.create({
-	buttonText: {
-		fontSize: 24,
-		padding: 5,
-		marginTop: 20,
-		marginLeft: 5,
-		backgroundColor: "rgba(0, 0, 0, 0.60)",
-		color: "white",
-		textAlign: "center",
-		maxWidth: "20%"
-	}
-});
 
 const saveSteps = {
 	notTracking: 1,
