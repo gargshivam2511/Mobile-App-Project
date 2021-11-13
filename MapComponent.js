@@ -8,14 +8,11 @@ import {
 	Text
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { parseGpx } from "./GpxParser";
+import { parseGpx, Track, Segment, Point } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import GpxTrack from "./GpxTrack";
-import GpxSegment from "./GpxSegment";
-import GpxPoint from "./GpxPoint";
 import SaveTrackComponent from "./SaveTrackComponent";
 
 const windowWidth = Dimensions.get("window").width;
@@ -29,7 +26,7 @@ export default class MapComponent extends Component {
 			selectedTrackName: "",
 			canTrack: false,
 			isTracking: false,
-			userTrack: new GpxTrack("user track", [new GpxSegment([])]),
+			userTrack: new Track("user track", [new Segment([])]),
 			trackNameDialogVisible: false
 		};
 
@@ -62,7 +59,7 @@ export default class MapComponent extends Component {
 			(location) => {
 				var trackCopy = this.state.userTrack;
 				trackCopy.segments[0].points.push(
-					new GpxPoint(location.coords.latitude, location.coords.longitude)
+					new Point(location.coords.latitude, location.coords.longitude)
 				);
 				this.setState({ userTrack: trackCopy });
 			}
@@ -189,7 +186,7 @@ export default class MapComponent extends Component {
 						onDiscard={() => {
 							this.stopTracking();
 							this.setState({
-								userTrack: new GpxTrack("user track", [new GpxSegment([])])
+								userTrack: new Track("user track", [new Segment([])])
 							});
 						}}
 						onSave={(trackName) => {
@@ -198,7 +195,7 @@ export default class MapComponent extends Component {
 							trackToSave.name = trackName;
 							this.addTracks([trackToSave]);
 							this.setState({
-								userTrack: new GpxTrack("user track", [new GpxSegment([])])
+								userTrack: new Track("user track", [new Segment([])])
 							});
 						}}
 					/>
