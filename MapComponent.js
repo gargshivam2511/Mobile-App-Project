@@ -24,7 +24,6 @@ export default class MapComponent extends Component {
 		this.state = {
 			tracks: [],
 			selectedTrackName: "",
-			canTrack: false,
 			isTracking: false,
 			userTrack: new Track("user track", [new Segment([])]),
 			trackNameDialogVisible: false
@@ -36,14 +35,7 @@ export default class MapComponent extends Component {
 			}
 		});
 
-		//Request location permissions if the app doesn't already have it.
-		//If permissions are denied, then the ability to track your
-		//route will be hidden
-		Location.requestForegroundPermissionsAsync().then((response) => {
-			if (response.granted) {
-				this.setState({ canTrack: true });
-			}
-		});
+		Location.requestForegroundPermissionsAsync();
 	}
 
 	startTracking = async () => {
@@ -183,6 +175,7 @@ export default class MapComponent extends Component {
 					style={styles.map}
 					showsUserLocation={true}
 					mapType="standard"
+					showsMyLocationButton={false}
 					//TODO: Replace with current location
 					initialRegion={{
 						latitude: 49.25,
