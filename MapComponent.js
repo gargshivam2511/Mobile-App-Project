@@ -4,8 +4,7 @@ import {
 	StyleSheet,
 	Dimensions,
 	Alert,
-	TouchableHighlight,
-	Text
+	ActivityIndicator
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx, Track, Segment, Point } from "./GpxParser";
@@ -26,7 +25,8 @@ export default class MapComponent extends Component {
 			selectedTrackName: "",
 			isTracking: false,
 			userTrack: new Track("user track", [new Segment([])]),
-			trackNameDialogVisible: false
+			trackNameDialogVisible: false,
+			isLoading: true
 		};
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
@@ -35,7 +35,25 @@ export default class MapComponent extends Component {
 			}
 		});
 
-		Location.requestForegroundPermissionsAsync();
+		Location.requestForegroundPermissionsAsync()
+			.then((response) => {
+				Location.getLastKnownPositionAsync()
+					.then((location) => {
+						this.initialMapRegion = {
+							latitude: location.coords.latitude,
+							longitude: location.coords.longitude,
+							latitudeDelta: 0.2,
+							longitudeDelta: 0.2
+						};
+					})
+					.catch(() => {})
+					.finally(() => {
+						this.setState({ isLoading: false });
+					});
+			})
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	startTracking = async () => {
@@ -170,28 +188,32 @@ export default class MapComponent extends Component {
 						}}
 					/>
 				</View>
-				<MapView
-					provider={PROVIDER_GOOGLE}
-					style={styles.map}
-					showsUserLocation={true}
-					mapType="standard"
-					showsMyLocationButton={false}
-					//TODO: Replace with current location
-					initialRegion={{
-						latitude: 49.25,
-						longitude: -123.1,
-						latitudeDelta: 0.2,
-						longitudeDelta: 0.2
-					}}
-				>
-					{this.renderTracks()}
 
-					<TrackComponent
-						key={this.state.userTrack.name}
-						track={this.state.userTrack}
-						color="green"
-					/>
-				</MapView>
+				<View style={styles.mapContainer}>
+					{this.state.isLoading && (
+						<ActivityIndicator size="large" color="rgb(54, 54, 54)" />
+					)}
+					{!this.state.isLoading && (
+						//isLoading check allows location to be obtained prior to initial map rendering
+						//so that the initial map region is set correctly
+						<MapView
+							style={styles.map}
+							provider={PROVIDER_GOOGLE}
+							showsUserLocation={true}
+							mapType="standard"
+							showsMyLocationButton={false}
+							initialRegion={this.initialMapRegion}
+						>
+							{this.renderTracks()}
+
+							<TrackComponent
+								key={this.state.userTrack.name}
+								track={this.state.userTrack}
+								color="green"
+							/>
+						</MapView>
+					)}
+				</View>
 			</View>
 		);
 	}
@@ -202,6 +224,10 @@ const styles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject,
 		height: windowHeight,
 		flexDirection: "column-reverse"
+	},
+	mapContainer: {
+		flex: 1,
+		justifyContent: "center"
 	},
 	map: {
 		flex: 1
