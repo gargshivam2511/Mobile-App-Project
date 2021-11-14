@@ -1,22 +1,18 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
+import { LogBox } from "react-native";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
 // import gpxParser from "gpxparser";
 import MapComponent from "./MapComponent";
-
-import CommonStyleSheet from "./CommonStyleSheet";
+import UserComponent from "./UserComponent";
 
 const windowHeight = Dimensions.get("window").height;
 
 export default function App() {
-  // var track = parseGpx(gpxContent);
+  LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
   return (
     <View>
+      <UserComponent />
       <MapComponent />
-
-      {/* <Text style={CommonStyleSheet.map}></Text> */}
     </View>
   );
 }
