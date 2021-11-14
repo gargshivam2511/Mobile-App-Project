@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Text, TouchableHighlight, StyleSheet } from "react-native";
+import { Text, TouchableHighlight, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import CommonStyleSheet from "./CommonStyleSheet";
+import UploadButtonSvg from "./assets/upload-button.svg"; // SVG File
 
 export default class UploadComponent extends Component {
 	constructor(props) {
@@ -29,7 +30,16 @@ export default class UploadComponent extends Component {
 				style={CommonStyleSheet.button}
 				onPress={() => this.selectFile()}
 			>
-				<Text style={CommonStyleSheet.buttonText}>+</Text>
+				<View>
+					<UploadButtonSvg
+						width={40}
+						height={40}
+						style={[CommonStyleSheet.svgButton, { margin: 5 }]}
+					/>
+					<Text style={CommonStyleSheet.buttonText}>Upload</Text>
+				</View>
+
+				{/* <Text style={CommonStyleSheet.buttonText}>+</Text> */}
 			</TouchableHighlight>
 		);
 	}

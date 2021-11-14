@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { View, Text, TouchableHighlight } from "react-native";
 import Dialog from "react-native-dialog";
 import CommonStyleSheet from "./CommonStyleSheet";
+import StartButtonSvg from "./assets/start-button.svg";
+import StopButtonSvg from "./assets/stop-button.svg"; // SVG File
 
 export default class SaveTrackComponent extends Component {
 	constructor(props) {
@@ -23,7 +25,14 @@ export default class SaveTrackComponent extends Component {
 							this.props.onStart();
 						}}
 					>
-						<Text style={CommonStyleSheet.buttonText}>Start</Text>
+						<View>
+							<StartButtonSvg
+								width={40}
+								height={40}
+								style={[CommonStyleSheet.svgButton, { margin: 10 }]}
+							/>
+							<Text style={CommonStyleSheet.buttonText}>Start</Text>
+						</View>
 					</TouchableHighlight>
 				)}
 
@@ -34,7 +43,14 @@ export default class SaveTrackComponent extends Component {
 							this.setState({ step: saveSteps.askForSave });
 						}}
 					>
-						<Text style={CommonStyleSheet.buttonText}>Stop</Text>
+						<View>
+							<StopButtonSvg
+								width={40}
+								height={40}
+								style={[CommonStyleSheet.svgButton, { margin: 10 }]}
+							/>
+							<Text style={CommonStyleSheet.buttonText}>Start</Text>
+						</View>
 					</TouchableHighlight>
 				)}
 

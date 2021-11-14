@@ -11,10 +11,14 @@ export default CommonStyleSheet = StyleSheet.create({
 		alignSelf: "flex-start"
 	},
 	buttonText: {
-		fontSize: 24,
-		paddingVertical: 10,
-		paddingHorizontal: 15,
+		fontSize: 12,
+		// paddingVertical: 10,
+		// paddingHorizontal: 15,
 		color: "white",
 		textAlign: "center"
+	},
+	svgButton: {
+		color: "white",
+		alignSelf: "center"
 	}
 });
