@@ -148,6 +148,36 @@ export default class MapComponent extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
+				<View style={styles.toolbar}>
+					<UploadComponent
+						onFileRead={(data) => {
+							parseGpx(data, (tracks) => {
+								this.addTracks(tracks);
+							});
+						}}
+					/>
+
+					<SaveTrackComponent
+						onStart={() => {
+							this.startTracking();
+						}}
+						onDiscard={() => {
+							this.stopTracking();
+							this.setState({
+								userTrack: new Track("user track", [new Segment([])])
+							});
+						}}
+						onSave={(trackName) => {
+							this.stopTracking();
+							let trackToSave = this.state.userTrack;
+							trackToSave.name = trackName;
+							this.addTracks([trackToSave]);
+							this.setState({
+								userTrack: new Track("user track", [new Segment([])])
+							});
+						}}
+					/>
+				</View>
 				<MapView
 					provider={PROVIDER_GOOGLE}
 					style={styles.map}
@@ -169,56 +199,24 @@ export default class MapComponent extends Component {
 						color="green"
 					/>
 				</MapView>
-
-				<UploadComponent
-					onFileRead={(data) => {
-						parseGpx(data, (tracks) => {
-							this.addTracks(tracks);
-						});
-					}}
-				/>
-
-				{this.state.canTrack && (
-					<SaveTrackComponent
-						onStart={() => {
-							this.startTracking();
-						}}
-						onDiscard={() => {
-							this.stopTracking();
-							this.setState({
-								userTrack: new Track("user track", [new Segment([])])
-							});
-						}}
-						onSave={(trackName) => {
-							this.stopTracking();
-							let trackToSave = this.state.userTrack;
-							trackToSave.name = trackName;
-							this.addTracks([trackToSave]);
-							this.setState({
-								userTrack: new Track("user track", [new Segment([])])
-							});
-						}}
-					/>
-				)}
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {},
-	map: {
+	container: {
 		...StyleSheet.absoluteFillObject,
-		height: windowHeight
+		height: windowHeight,
+		flexDirection: "column-reverse"
 	},
-	buttonText: {
-		fontSize: 24,
-		padding: 5,
-		marginTop: 20,
-		marginLeft: 5,
-		backgroundColor: "rgba(0, 0, 0, 0.60)",
-		color: "white",
-		textAlign: "center",
-		maxWidth: "20%"
+	map: {
+		flex: 1
+	},
+	toolbar: {
+		backgroundColor: "rgb(54, 54, 54)",
+		flexDirection: "row",
+		justifyContent: "space-around",
+		alignItems: "center"
 	}
 });

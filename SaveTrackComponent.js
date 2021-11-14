@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, TouchableHighlight } from "react-native";
+import { View, Text, TouchableHighlight, Alert } from "react-native";
 import Dialog from "react-native-dialog";
 import CommonStyleSheet from "./CommonStyleSheet";
+import * as Location from "expo-location";
 import StartButtonSvg from "./assets/start-button.svg";
-import StopButtonSvg from "./assets/stop-button.svg"; // SVG File
+import StopButtonSvg from "./assets/stop-button.svg";
 
 export default class SaveTrackComponent extends Component {
 	constructor(props) {
@@ -17,26 +18,35 @@ export default class SaveTrackComponent extends Component {
 	render() {
 		return (
 			<View>
-				{this.state.step == saveSteps.notTracking && (
+				{this.state.step === saveSteps.notTracking && (
 					<TouchableHighlight
 						style={CommonStyleSheet.button}
 						onPress={() => {
-							this.setState({ step: saveSteps.tracking });
-							this.props.onStart();
+							Location.getForegroundPermissionsAsync().then((response) => {
+								if (response.granted) {
+									this.setState({ step: saveSteps.tracking });
+									this.props.onStart();
+								} else {
+									Alert.alert(
+										"Cannot Track Location",
+										"Location tracking must be enabled in the app settings"
+									);
+								}
+							});
 						}}
 					>
 						<View>
 							<StartButtonSvg
-								width={40}
-								height={40}
-								style={[CommonStyleSheet.svgButton, { margin: 10 }]}
+								width={25}
+								height={25}
+								style={[CommonStyleSheet.svgButton, { margin: 2 }]}
 							/>
 							<Text style={CommonStyleSheet.buttonText}>Start</Text>
 						</View>
 					</TouchableHighlight>
 				)}
 
-				{this.state.step == saveSteps.tracking && (
+				{this.state.step !== saveSteps.notTracking && (
 					<TouchableHighlight
 						style={CommonStyleSheet.button}
 						onPress={() => {
@@ -45,11 +55,11 @@ export default class SaveTrackComponent extends Component {
 					>
 						<View>
 							<StopButtonSvg
-								width={40}
-								height={40}
-								style={[CommonStyleSheet.svgButton, { margin: 10 }]}
+								width={25}
+								height={25}
+								style={[CommonStyleSheet.svgButton, { margin: 2 }]}
 							/>
-							<Text style={CommonStyleSheet.buttonText}>Start</Text>
+							<Text style={CommonStyleSheet.buttonText}>Stop</Text>
 						</View>
 					</TouchableHighlight>
 				)}

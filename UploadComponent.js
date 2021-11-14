@@ -32,14 +32,12 @@ export default class UploadComponent extends Component {
 			>
 				<View>
 					<UploadButtonSvg
-						width={40}
-						height={40}
-						style={[CommonStyleSheet.svgButton, { margin: 5 }]}
+						width={25}
+						height={25}
+						style={[CommonStyleSheet.svgButton]}
 					/>
 					<Text style={CommonStyleSheet.buttonText}>Upload</Text>
 				</View>
-
-				{/* <Text style={CommonStyleSheet.buttonText}>+</Text> */}
 			</TouchableHighlight>
 		);
 	}

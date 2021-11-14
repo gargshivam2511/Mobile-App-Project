@@ -4,16 +4,13 @@ import { StyleSheet } from "react-native";
 // in different Components.
 export default CommonStyleSheet = StyleSheet.create({
 	button: {
-		marginTop: 20,
-		marginLeft: 5,
+		marginVertical: 4,
 		borderRadius: 5,
-		backgroundColor: "rgba(0, 0, 0, 0.60)",
-		alignSelf: "flex-start"
+		backgroundColor: "rgba(0, 0, 0, 0)",
+		alignSelf: "center"
 	},
 	buttonText: {
 		fontSize: 12,
-		// paddingVertical: 10,
-		// paddingHorizontal: 15,
 		color: "white",
 		textAlign: "center"
 	},
