@@ -81,7 +81,10 @@ export default class MapComponent extends Component {
                 this.distance(
                   location.coords.latitude,
                   location.coords.longitude,
-                  track.segments[0].points[0],
+                  track.segments[0].points[track.segments[0].points.length - 1]
+                    .lat,
+                  track.segments[0].points[track.segments[0].points.length - 1]
+                    .lon,
                   1
                 );
               if (near) {
