@@ -5,6 +5,9 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  Modal,
+  TextInput,
+  TouchableHighlight,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { parseGpx, Track, Segment, Point } from "./GpxParser";
@@ -13,9 +16,11 @@ import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import SaveTrackComponent from "./SaveTrackComponent";
+import ProfileComponent from "./ProfileComponent";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+const circleRadius = 1; // in km
 
 export default class MapComponent extends Component {
   constructor(props) {
@@ -28,6 +33,7 @@ export default class MapComponent extends Component {
       userTrack: new Track("user track", [new Segment([])]),
       trackNameDialogVisible: false,
       isLoading: true,
+      modal: false,
     };
 
     AsyncStorage.getItem("tracks").then((tracks) => {
@@ -65,15 +71,16 @@ export default class MapComponent extends Component {
       },
       (location) => {
         if (this.state.selectedTrackName != "" && this.state.notification) {
-          this.state.tracks.map((track) => {
-            if (track.name == this.state.selectedTrackName) {
+          this.state.tracks
+            .filter((track) => track.name == this.state.selectedTrackName)
+            .forEach((track) => {
               // Check starting point
               let near = this.distance(
                 location.coords.latitude,
                 location.coords.longitude,
                 track.segments[0].points[0].lat,
                 track.segments[0].points[0].lon,
-                1
+                circleRadius
               );
               //Check end point
               near =
@@ -85,7 +92,7 @@ export default class MapComponent extends Component {
                     .lat,
                   track.segments[0].points[track.segments[0].points.length - 1]
                     .lon,
-                  1
+                  circleRadius
                 );
               if (near) {
                 Alert.alert(track.name, "We are close to track " + track.name, [
@@ -95,8 +102,7 @@ export default class MapComponent extends Component {
                 ]);
                 this.state.notification = false;
               }
-            }
-          });
+            });
         }
       }
     );
@@ -118,6 +124,7 @@ export default class MapComponent extends Component {
     if (d > radius) return false;
     return true;
   }
+
   startTracking = async () => {
     this.setState({ isTracking: true });
     this.tracker = await Location.watchPositionAsync(
@@ -156,21 +163,36 @@ export default class MapComponent extends Component {
           track={track}
           color={shouldHighlight ? "red" : "blue"}
           onPress={() => {
-            this.setState({
-              selectedTrackName: track.name,
-              notification: true,
-            });
             Alert.alert(
               track.name,
-              "Do you want to delete " + track.name + "?",
+              "Do you want to Select/Delete " + track.name + "?",
               [
                 {
-                  text: "Yes",
+                  text: "Delete",
                   onPress: () => {
                     this.removeTrack(track);
                   },
                 },
-                { text: "No" },
+                {
+                  text:
+                    track.name != this.state.selectedTrackName
+                      ? "Select"
+                      : "Unselect",
+                  onPress: () => {
+                    track.name != this.state.selectedTrackName
+                      ? this.setState({
+                          selectedTrackName: track.name,
+                          notification: true,
+                        })
+                      : this.setState({
+                          selectedTrackName: "",
+                          notification: false,
+                        });
+                  },
+                },
+                {
+                  text: "Cancel",
+                },
               ]
             );
           }}
@@ -232,6 +254,11 @@ export default class MapComponent extends Component {
             }}
           />
 
+          {/* <ProfileComponent
+            onClick={() => {
+              this.setState({ modal: !this.state.modal });
+            }}
+          /> */}
           <SaveTrackComponent
             onStart={() => {
               this.startTracking();
@@ -253,6 +280,22 @@ export default class MapComponent extends Component {
             }}
           />
         </View>
+
+        {this.state.modal && (
+          <Modal
+            onRequestClose={() => {
+              this.setState({ modal: false });
+            }}
+          >
+            <View style={styles.modalContainer}>
+              <TextInput
+                name="text0"
+                style={styles.tx}
+                onSubmitEditing={(event) => {}}
+              ></TextInput>
+            </View>
+          </Modal>
+        )}
 
         <View style={styles.mapContainer}>
           {this.state.isLoading && (
@@ -302,5 +345,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+  },
+  tx: {
+    height: 40,
+    width: 250,
+    borderColor: "gray",
+    borderWidth: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
