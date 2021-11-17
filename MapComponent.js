@@ -4,7 +4,10 @@ import {
 	StyleSheet,
 	Dimensions,
 	Alert,
-	ActivityIndicator
+	ActivityIndicator,
+	Modal,
+	TextInput,
+	TouchableHighlight
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { distance } from "./DistanceUtils";
@@ -14,6 +17,7 @@ import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import SaveTrackComponent from "./SaveTrackComponent";
+import ProfileComponent from "./ProfileComponent";
 
 const windowHeight = Dimensions.get("window").height;
 const circleRadius = 1; // in km
@@ -28,7 +32,8 @@ export default class MapComponent extends Component {
 			isTracking: false,
 			userTrack: new Track("user track", [new Segment([])]),
 			trackNameDialogVisible: false,
-			isLoading: true
+			isLoading: true,
+			modal: false
 		};
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
@@ -221,6 +226,11 @@ export default class MapComponent extends Component {
 							});
 						}}
 					/>
+					<ProfileComponent
+						onClick={() => {
+							this.setState({ modal: !this.state.modal });
+						}}
+					/>
 					<SaveTrackComponent
 						onStart={() => {
 							this.setState({ isTracking: true });
@@ -243,6 +253,21 @@ export default class MapComponent extends Component {
 					/>
 				</View>
 
+				{this.state.modal && (
+					<Modal
+						onRequestClose={() => {
+							this.setState({ modal: false });
+						}}
+					>
+						<View style={styles.modalContainer}>
+							<TextInput
+								name="text0"
+								style={styles.tx}
+								onSubmitEditing={(event) => {}}
+							></TextInput>
+						</View>
+					</Modal>
+				)}
 				<View style={styles.mapContainer}>
 					{this.state.isLoading && (
 						<ActivityIndicator size="large" color="rgb(54, 54, 54)" />
