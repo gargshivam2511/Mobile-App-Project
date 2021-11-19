@@ -279,7 +279,7 @@ export default class MapComponent extends Component {
 							style={styles.map}
 							provider={PROVIDER_GOOGLE}
 							showsUserLocation={true}
-							mapType="standard"
+							mapType="satellite"
 							showsMyLocationButton={false}
 							initialRegion={this.initialMapRegion}
 							onUserLocationChange={(e) => {
@@ -292,7 +292,7 @@ export default class MapComponent extends Component {
 							<TrackComponent
 								key={this.state.userTrack.name}
 								track={this.state.userTrack}
-								color="green"
+								color="rgb(255,140,0)"
 							/>
 						</MapView>
 					)}
