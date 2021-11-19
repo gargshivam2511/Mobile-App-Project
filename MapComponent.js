@@ -17,7 +17,7 @@ import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import SaveTrackComponent from "./SaveTrackComponent";
-import ProfileComponent from "./ProfileComponent";
+import SettingsComponent from "./SettingsComponent";
 
 const windowHeight = Dimensions.get("window").height;
 const circleRadius = 1; // in km
@@ -226,11 +226,6 @@ export default class MapComponent extends Component {
 							});
 						}}
 					/>
-					<ProfileComponent
-						onClick={() => {
-							this.setState({ modal: !this.state.modal });
-						}}
-					/>
 					<SaveTrackComponent
 						onStart={() => {
 							this.setState({ isTracking: true });
@@ -249,6 +244,11 @@ export default class MapComponent extends Component {
 								isTracking: false,
 								userTrack: new Track("user track", [new Segment([])])
 							});
+						}}
+					/>
+					<SettingsComponent
+						onClick={() => {
+							this.setState({ modal: !this.state.modal });
 						}}
 					/>
 				</View>
