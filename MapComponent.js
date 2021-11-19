@@ -87,28 +87,12 @@ export default class MapComponent extends Component {
 		);
 	}
 
-	startTracking = async () => {
-		this.setState({ isTracking: true });
-		this.tracker = await Location.watchPositionAsync(
-			{
-				accuracy: Location.Accuracy.Highest,
-				showsBackgroundLocationIndicator: true,
-				timeInterval: 5000,
-				activityType: Location.ActivityType.Fitness,
-				distanceInterval: 20
-			},
-			(location) => {
-				var trackCopy = this.state.userTrack;
-				trackCopy.segments[0].points.push(
-					new Point(location.coords.latitude, location.coords.longitude)
-				);
-				this.setState({ userTrack: trackCopy });
-			}
-		);
-	};
-
-	stopTracking() {
-		this.tracker.remove();
+	updateUserTrack(latitude, longitude) {
+		if (this.state.isTracking) {
+			var trackCopy = this.state.userTrack;
+			trackCopy.segments[0].points.push(new Point(latitude, longitude));
+			this.setState({ userTrack: trackCopy });
+		}
 	}
 
 	renderTracks() {
@@ -239,20 +223,20 @@ export default class MapComponent extends Component {
 					/>
 					<SaveTrackComponent
 						onStart={() => {
-							this.startTracking();
+							this.setState({ isTracking: true });
 						}}
 						onDiscard={() => {
-							this.stopTracking();
 							this.setState({
+								isTracking: false,
 								userTrack: new Track("user track", [new Segment([])])
 							});
 						}}
 						onSave={(trackName) => {
-							this.stopTracking();
 							let trackToSave = this.state.userTrack;
 							trackToSave.name = trackName;
 							this.addTracks([trackToSave]);
 							this.setState({
+								isTracking: false,
 								userTrack: new Track("user track", [new Segment([])])
 							});
 						}}
@@ -273,6 +257,10 @@ export default class MapComponent extends Component {
 							mapType="standard"
 							showsMyLocationButton={false}
 							initialRegion={this.initialMapRegion}
+							onUserLocationChange={(e) => {
+								let { latitude, longitude } = e.nativeEvent.coordinate;
+								this.updateUserTrack(latitude, longitude);
+							}}
 						>
 							{this.renderTracks()}
 
