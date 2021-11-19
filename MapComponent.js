@@ -320,5 +320,17 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		alignItems: "center"
+	},
+	tx: {
+		height: 40,
+		width: 250,
+		borderColor: "gray",
+		borderWidth: 1
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		justifyContent: "center"
 	}
 });
