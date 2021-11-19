@@ -70,11 +70,15 @@ export default class MapComponent extends Component {
 										.lon
 								) <= circleRadius;
 							if (near) {
-								Alert.alert(track.name, "We are close to track " + track.name, [
-									{
-										text: "Ok"
-									}
-								]);
+								Alert.alert(
+									track.name,
+									"You are close to track " + track.name,
+									[
+										{
+											text: "Ok"
+										}
+									]
+								);
 								this.state.notification = false;
 							}
 						});
