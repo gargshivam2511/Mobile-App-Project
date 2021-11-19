@@ -7,6 +7,7 @@ import {
 	ActivityIndicator
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { distance } from "./DistanceUtils";
 import { parseGpx, Track, Segment, Point } from "./GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
@@ -50,25 +51,24 @@ export default class MapComponent extends Component {
 						.filter((track) => track.name == this.state.selectedTrackName)
 						.forEach((track) => {
 							// Check starting point
-							let near = this.distance(
-								location.coords.latitude,
-								location.coords.longitude,
-								track.segments[0].points[0].lat,
-								track.segments[0].points[0].lon,
-								circleRadius
-							);
+							let near =
+								distance(
+									location.coords.latitude,
+									location.coords.longitude,
+									track.segments[0].points[0].lat,
+									track.segments[0].points[0].lon
+								) <= circleRadius;
 							//Check end point
 							near =
 								near ||
-								this.distance(
+								distance(
 									location.coords.latitude,
 									location.coords.longitude,
 									track.segments[0].points[track.segments[0].points.length - 1]
 										.lat,
 									track.segments[0].points[track.segments[0].points.length - 1]
-										.lon,
-									circleRadius
-								);
+										.lon
+								) <= circleRadius;
 							if (near) {
 								Alert.alert(track.name, "We are close to track " + track.name, [
 									{
@@ -81,23 +81,6 @@ export default class MapComponent extends Component {
 				}
 			}
 		);
-	}
-
-	distance(lat1, long1, lat2, long2, radius) {
-		var R = 6371; // approx. Radius of the earth in km
-		var dLat = (lat2 - lat1) * (Math.PI / 180);
-		var dLon = (long2 - long1) * (Math.PI / 180);
-		lat1 = lat1 * (Math.PI / 180);
-		lat2 = lat2 * (Math.PI / 180);
-		long1 = long1 * (Math.PI / 180);
-		long2 = long2 * (Math.PI / 180);
-		var a =
-			Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-			Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		var d = R * c; // Distance in km
-		if (d > radius) return false;
-		return true;
 	}
 
 	startTracking = async () => {
