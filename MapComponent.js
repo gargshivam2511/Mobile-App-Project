@@ -36,25 +36,6 @@ export default class MapComponent extends Component {
 			}
 		});
 
-		Location.requestForegroundPermissionsAsync()
-			.then((response) => {
-				Location.getLastKnownPositionAsync()
-					.then((location) => {
-						this.initialMapRegion = {
-							latitude: location.coords.latitude,
-							longitude: location.coords.longitude,
-							latitudeDelta: 0.2,
-							longitudeDelta: 0.2
-						};
-					})
-					.catch(() => {})
-					.finally(() => {
-						this.setState({ isLoading: false });
-					});
-			})
-			.catch(() => {
-				this.setState({ isLoading: false });
-			});
 		Location.watchPositionAsync(
 			{
 				accuracy: Location.Accuracy.Highest,
@@ -234,6 +215,28 @@ export default class MapComponent extends Component {
 		} catch (e) {
 			console.log(e);
 		}
+	}
+
+	componentDidMount() {
+		Location.requestForegroundPermissionsAsync()
+			.then((response) => {
+				Location.getLastKnownPositionAsync()
+					.then((location) => {
+						this.initialMapRegion = {
+							latitude: location.coords.latitude,
+							longitude: location.coords.longitude,
+							latitudeDelta: 0.2,
+							longitudeDelta: 0.2
+						};
+					})
+					.catch(() => {})
+					.finally(() => {
+						this.setState({ isLoading: false });
+					});
+			})
+			.catch(() => {
+				this.setState({ isLoading: false });
+			});
 	}
 
 	render() {
