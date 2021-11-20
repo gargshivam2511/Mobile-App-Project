@@ -11,6 +11,7 @@ export default class ToolbarButtonComponent extends Component {
 	render() {
 		return (
 			<TouchableHighlight
+				underlayColor="rgba(0,0,0,0)"
 				style={CommonStyleSheet.button}
 				onPress={this.props.onPress}
 			>
