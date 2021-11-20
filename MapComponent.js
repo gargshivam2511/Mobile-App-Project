@@ -4,10 +4,7 @@ import {
 	StyleSheet,
 	Dimensions,
 	Alert,
-	ActivityIndicator,
-	Modal,
-	TextInput,
-	TouchableHighlight
+	ActivityIndicator
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { distance } from "./DistanceUtils";
@@ -20,7 +17,6 @@ import SaveTrackComponent from "./SaveTrackComponent";
 import SettingsComponent from "./SettingsComponent";
 
 const windowHeight = Dimensions.get("window").height;
-const circleRadius = 1; // in km
 
 export default class MapComponent extends Component {
 	constructor(props) {
@@ -32,8 +28,7 @@ export default class MapComponent extends Component {
 			isTracking: false,
 			userTrack: new Track("user track", [new Segment([])]),
 			trackNameDialogVisible: false,
-			isLoading: true,
-			modal: false
+			isLoading: true
 		};
 
 		AsyncStorage.getItem("tracks").then((tracks) => {
@@ -50,7 +45,11 @@ export default class MapComponent extends Component {
 				activityType: Location.ActivityType.Fitness,
 				distanceInterval: 20
 			},
-			(location) => {
+			async (location) => {
+				let distanceThreshold = parseInt(
+					await AsyncStorage.getItem("distanceThreshold")
+				);
+
 				if (this.state.selectedTrackName != "" && this.state.notification) {
 					this.state.tracks
 						.filter((track) => track.name == this.state.selectedTrackName)
@@ -62,7 +61,7 @@ export default class MapComponent extends Component {
 									location.coords.longitude,
 									track.segments[0].points[0].lat,
 									track.segments[0].points[0].lon
-								) <= circleRadius;
+								) <= distanceThreshold;
 							//Check end point
 							near =
 								near ||
@@ -73,7 +72,7 @@ export default class MapComponent extends Component {
 										.lat,
 									track.segments[0].points[track.segments[0].points.length - 1]
 										.lon
-								) <= circleRadius;
+								) <= distanceThreshold;
 							if (near) {
 								Alert.alert(
 									track.name,
@@ -247,27 +246,12 @@ export default class MapComponent extends Component {
 						}}
 					/>
 					<SettingsComponent
-						onClick={() => {
-							this.setState({ modal: !this.state.modal });
+						onSettingsChanged={(settings) => {
+							this.distanceThreshold = settings.distanceThreshold;
 						}}
 					/>
 				</View>
 
-				{this.state.modal && (
-					<Modal
-						onRequestClose={() => {
-							this.setState({ modal: false });
-						}}
-					>
-						<View style={styles.modalContainer}>
-							<TextInput
-								name="text0"
-								style={styles.tx}
-								onSubmitEditing={(event) => {}}
-							></TextInput>
-						</View>
-					</Modal>
-				)}
 				<View style={styles.mapContainer}>
 					{this.state.isLoading && (
 						<ActivityIndicator size="large" color="rgb(54, 54, 54)" />
@@ -320,17 +304,5 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		alignItems: "center"
-	},
-	tx: {
-		height: 40,
-		width: 250,
-		borderColor: "gray",
-		borderWidth: 1
-	},
-	modalContainer: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center"
 	}
 });

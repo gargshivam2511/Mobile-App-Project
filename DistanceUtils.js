@@ -12,5 +12,5 @@ export function distance(lat1, long1, lat2, long2) {
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	var d = R * c; // Distance in km
 
-	return d;
+	return d * 1000; // Distance in m
 }
