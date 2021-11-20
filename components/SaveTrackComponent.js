@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { View, Text, TouchableHighlight, Alert } from "react-native";
 import Dialog from "react-native-dialog";
-import CommonStyleSheet from "./CommonStyleSheet";
 import * as Location from "expo-location";
-import StartButtonSvg from "./assets/start-button.svg";
-import StopButtonSvg from "./assets/stop-button.svg";
+import ToolbarButtonComponent from "./ToolbarButtonComponent";
+import StartButtonSvg from "../assets/start-button.svg";
+import StopButtonSvg from "../assets/stop-button.svg";
 
 export default class SaveTrackComponent extends Component {
 	constructor(props) {
@@ -19,8 +19,9 @@ export default class SaveTrackComponent extends Component {
 		return (
 			<View>
 				{this.state.step === saveSteps.notTracking && (
-					<TouchableHighlight
-						style={CommonStyleSheet.button}
+					<ToolbarButtonComponent
+						text="Start"
+						svg={StartButtonSvg}
 						onPress={() => {
 							Location.getForegroundPermissionsAsync().then((response) => {
 								if (response.granted) {
@@ -34,34 +35,17 @@ export default class SaveTrackComponent extends Component {
 								}
 							});
 						}}
-					>
-						<View>
-							<StartButtonSvg
-								width={25}
-								height={25}
-								style={[CommonStyleSheet.svgButton, { margin: 2 }]}
-							/>
-							<Text style={CommonStyleSheet.buttonText}>Start</Text>
-						</View>
-					</TouchableHighlight>
+					/>
 				)}
 
 				{this.state.step !== saveSteps.notTracking && (
-					<TouchableHighlight
-						style={CommonStyleSheet.button}
+					<ToolbarButtonComponent
+						text="Stop"
+						svg={StopButtonSvg}
 						onPress={() => {
 							this.setState({ step: saveSteps.askForSave });
 						}}
-					>
-						<View>
-							<StopButtonSvg
-								width={25}
-								height={25}
-								style={[CommonStyleSheet.svgButton, { margin: 2 }]}
-							/>
-							<Text style={CommonStyleSheet.buttonText}>Stop</Text>
-						</View>
-					</TouchableHighlight>
+					/>
 				)}
 
 				{this.state.step === saveSteps.askForSave && (

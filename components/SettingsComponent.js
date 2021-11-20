@@ -8,8 +8,9 @@ import {
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CommonStyleSheet from "./CommonStyleSheet";
-import SettingsButtonSvg from "./assets/settings-button.svg";
+import CommonStyleSheet from "../CommonStyleSheet";
+import ToolbarButtonComponent from "./ToolbarButtonComponent";
+import SettingsButtonSvg from "../assets/settings-button.svg";
 
 const maxDistanceThreshold = 2000;
 const distanceStepSize = 10;
@@ -43,21 +44,14 @@ export default class SettingsComponent extends Component {
 	render() {
 		return (
 			<View>
-				<TouchableHighlight
-					style={CommonStyleSheet.button}
+				<ToolbarButtonComponent
+					text="Settings"
+					svg={SettingsButtonSvg}
 					onPress={() => {
 						this.setState({ modal: !this.state.modal });
 					}}
-				>
-					<View>
-						<SettingsButtonSvg
-							width={25}
-							height={25}
-							style={[CommonStyleSheet.svgButton]}
-						/>
-						<Text style={CommonStyleSheet.buttonText}>Settings</Text>
-					</View>
-				</TouchableHighlight>
+				/>
+
 				{this.state.modal && (
 					<Modal
 						onRequestClose={() => {

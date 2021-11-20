@@ -7,8 +7,8 @@ import {
 	ActivityIndicator
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { distance } from "./DistanceUtils";
-import { parseGpx, Track, Segment, Point } from "./GpxParser";
+import { distance } from "../DistanceUtils";
+import { parseGpx, Track, Segment, Point } from "../GpxParser";
 import TrackComponent from "./TrackComponent";
 import UploadComponent from "./UploadComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";

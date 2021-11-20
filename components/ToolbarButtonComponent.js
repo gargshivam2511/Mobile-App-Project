@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Text, TouchableHighlight, View } from "react-native";
-import CommonStyleSheet from "./CommonStyleSheet";
+import CommonStyleSheet from "../CommonStyleSheet";
 
-export default class ToolbarButton extends Component {
+export default class ToolbarButtonComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
