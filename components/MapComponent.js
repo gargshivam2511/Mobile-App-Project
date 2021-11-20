@@ -26,7 +26,7 @@ export default class MapComponent extends Component {
 			notification: true,
 			selectedTrackName: "",
 			isTracking: false,
-			userTrack: new Track("user track", [new Segment([])]),
+			userTrack: null,
 			trackNameDialogVisible: false,
 			isLoading: true
 		};
@@ -227,12 +227,15 @@ export default class MapComponent extends Component {
 					/>
 					<SaveTrackComponent
 						onStart={() => {
-							this.setState({ isTracking: true });
+							this.setState({
+								isTracking: true,
+								userTrack: new Track("user track", [new Segment([])])
+							});
 						}}
 						onDiscard={() => {
 							this.setState({
 								isTracking: false,
-								userTrack: new Track("user track", [new Segment([])])
+								userTrack: null
 							});
 						}}
 						onSave={(trackName) => {
@@ -241,7 +244,7 @@ export default class MapComponent extends Component {
 							this.addTracks([trackToSave]);
 							this.setState({
 								isTracking: false,
-								userTrack: new Track("user track", [new Segment([])])
+								userTrack: null
 							});
 						}}
 					/>
@@ -273,11 +276,13 @@ export default class MapComponent extends Component {
 						>
 							{this.renderTracks()}
 
-							<TrackComponent
-								key={this.state.userTrack.name}
-								track={this.state.userTrack}
-								color="rgb(255,140,0)"
-							/>
+							{this.state.userTrack !== null && (
+								<TrackComponent
+									key={this.state.userTrack.name}
+									track={this.state.userTrack}
+									color="rgb(255,140,0)"
+								/>
+							)}
 						</MapView>
 					)}
 				</View>
