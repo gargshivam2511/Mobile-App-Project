@@ -11,11 +11,11 @@ export default CommonStyleSheet = StyleSheet.create({
 	},
 	buttonText: {
 		fontSize: 12,
-		color: "white",
+		color: "orange",
 		textAlign: "center"
 	},
 	svgButton: {
-		color: "white",
+		color: "orange",
 		alignSelf: "center"
 	}
 });
