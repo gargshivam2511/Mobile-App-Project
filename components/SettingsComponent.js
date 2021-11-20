@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {
 	Modal,
 	Text,
-	TouchableHighlight,
+	TouchableWithoutFeedback,
 	View,
 	StyleSheet
 } from "react-native";
@@ -31,7 +31,7 @@ export default class SettingsComponent extends Component {
 			let settings = this.state.settings;
 
 			let distanceThreshold = parseInt(values[0]);
-			if (distanceThreshold != null) {
+			if (distanceThreshold !== NaN) {
 				settings.distanceThreshold = distanceThreshold;
 			}
 
@@ -54,41 +54,54 @@ export default class SettingsComponent extends Component {
 
 				{this.state.modal && (
 					<Modal
+						animationType="slide"
 						onRequestClose={() => {
 							this.setState({ modal: false });
 						}}
 					>
-						<View style={styles.modalContainer}>
-							<TouchableHighlight
-								onPress={() => {
-									this.setState({ modal: false });
-								}}
-							>
-								<Text>Close</Text>
-							</TouchableHighlight>
-							<Slider
-								style={{ width: 200, height: 40 }}
-								value={this.state.settings.distanceThreshold}
-								step={distanceStepSize}
-								minimumValue={0}
-								maximumValue={maxDistanceThreshold}
-								minimumTrackTintColor="black"
-								maximumTrackTintColor="black"
-								onValueChange={(value) => {
-									let settings = this.state.settings;
-									settings.distanceThreshold = Math.round(value);
-									this.setState({
-										settings
-									});
-								}}
-								onSlidingComplete={(value) => {
-									AsyncStorage.setItem(
-										"distanceThreshold",
-										this.state.settings.distanceThreshold.toString()
-									);
-								}}
-							/>
-							<Text>{this.state.settings.distanceThreshold}m</Text>
+						<View style={styles.container}>
+							<View style={styles.closeContainer}>
+								<TouchableWithoutFeedback
+									onPress={() => {
+										this.setState({ modal: false });
+									}}
+								>
+									<Text style={styles.closeButton}>Close</Text>
+								</TouchableWithoutFeedback>
+							</View>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>Settings</Text>
+							</View>
+							<View style={styles.settingsContainer}>
+								<Text style={styles.settingHeader}>
+									Notification Distance Threshold
+								</Text>
+								<View style={styles.sliderContainer}>
+									<Slider
+										style={styles.slider}
+										value={this.state.settings.distanceThreshold}
+										step={distanceStepSize}
+										minimumValue={0}
+										maximumValue={maxDistanceThreshold}
+										minimumTrackTintColor="black"
+										maximumTrackTintColor="black"
+										onValueChange={(value) => {
+											let settings = this.state.settings;
+											settings.distanceThreshold = Math.round(value);
+											this.setState({
+												settings
+											});
+										}}
+										onSlidingComplete={(value) => {
+											AsyncStorage.setItem(
+												"distanceThreshold",
+												this.state.settings.distanceThreshold.toString()
+											);
+										}}
+									/>
+									<Text>{this.state.settings.distanceThreshold}m</Text>
+								</View>
+							</View>
 						</View>
 					</Modal>
 				)}
@@ -98,10 +111,39 @@ export default class SettingsComponent extends Component {
 }
 
 const styles = StyleSheet.create({
-	modalContainer: {
+	container: {
+		flex: 1
+	},
+	closeContainer: {
+		flexDirection: "row-reverse"
+	},
+	closeButton: {
+		textAlign: "center",
+		textAlignVertical: "center",
+		marginTop: 10,
+		marginRight: 10,
+		padding: 5
+	},
+	titleContainer: {
+		marginHorizontal: 30
+	},
+	title: {
+		fontWeight: "bold",
+		fontSize: 24
+	},
+	settingsContainer: {
 		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center"
+		margin: 30
+	},
+	settingHeader: {
+		fontWeight: "bold",
+		fontSize: 18
+	},
+	sliderContainer: {
+		flexDirection: "row",
+		alignItems: "center"
+	},
+	slider: {
+		flex: 1
 	}
 });
