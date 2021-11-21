@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import SaveTrackComponent from "./SaveTrackComponent";
 import SettingsComponent from "./SettingsComponent";
+import CommonStyleSheet from "../CommonStyleSheet";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	toolbar: {
-		backgroundColor: "rgb(54, 54, 54)",
+		...CommonStyleSheet.container,
 		flexDirection: "row",
 		justifyContent: "space-around",
 		alignItems: "center"
