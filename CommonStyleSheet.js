@@ -2,20 +2,15 @@ import { StyleSheet } from "react-native";
 
 // An CommonStyleSheet used for the purpose of consistency and reuse the same style
 // in different Components.
+
+export const backgroundColor = "rgb(51,51,51)";
+export const foregroundColor = "orange";
+
 export default CommonStyleSheet = StyleSheet.create({
-	button: {
-		marginVertical: 4,
-		borderRadius: 5,
-		backgroundColor: "rgba(0, 0, 0, 0)",
-		alignSelf: "center"
+	container: {
+		backgroundColor: backgroundColor
 	},
-	buttonText: {
-		fontSize: 12,
-		color: "orange",
-		textAlign: "center"
-	},
-	svgButton: {
-		color: "orange",
-		alignSelf: "center"
+	text: {
+		color: foregroundColor
 	}
 });

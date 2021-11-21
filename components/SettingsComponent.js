@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CommonStyleSheet from "../CommonStyleSheet";
+import CommonStyleSheet, { foregroundColor } from "../CommonStyleSheet";
 import ToolbarButtonComponent from "./ToolbarButtonComponent";
 import SettingsButtonSvg from "../assets/settings-button.svg";
 
@@ -83,8 +83,9 @@ export default class SettingsComponent extends Component {
 										step={distanceStepSize}
 										minimumValue={0}
 										maximumValue={maxDistanceThreshold}
-										minimumTrackTintColor="black"
-										maximumTrackTintColor="black"
+										minimumTrackTintColor={foregroundColor}
+										maximumTrackTintColor="white"
+										thumbTintColor="white"
 										onValueChange={(value) => {
 											let settings = this.state.settings;
 											settings.distanceThreshold = Math.round(value);
@@ -99,7 +100,14 @@ export default class SettingsComponent extends Component {
 											);
 										}}
 									/>
-									<Text>{this.state.settings.distanceThreshold}m</Text>
+									<Text
+										style={[
+											CommonStyleSheet.text,
+											{ width: "15%", textAlign: "right" }
+										]}
+									>
+										{this.state.settings.distanceThreshold}m
+									</Text>
 								</View>
 							</View>
 						</View>
@@ -112,12 +120,14 @@ export default class SettingsComponent extends Component {
 
 const styles = StyleSheet.create({
 	container: {
+		...CommonStyleSheet.container,
 		flex: 1
 	},
 	closeContainer: {
 		flexDirection: "row-reverse"
 	},
 	closeButton: {
+		...CommonStyleSheet.text,
 		textAlign: "center",
 		textAlignVertical: "center",
 		marginTop: 10,
@@ -128,6 +138,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 30
 	},
 	title: {
+		...CommonStyleSheet.text,
 		fontWeight: "bold",
 		fontSize: 24
 	},
@@ -136,6 +147,7 @@ const styles = StyleSheet.create({
 		margin: 30
 	},
 	settingHeader: {
+		...CommonStyleSheet.text,
 		fontWeight: "bold",
 		fontSize: 18
 	},

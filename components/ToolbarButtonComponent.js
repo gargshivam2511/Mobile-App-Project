@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Text, TouchableHighlight, View } from "react-native";
-import CommonStyleSheet from "../CommonStyleSheet";
+import { Text, TouchableHighlight, View, StyleSheet } from "react-native";
+import CommonStyleSheet, { foregroundColor } from "../CommonStyleSheet";
 
 export default class ToolbarButtonComponent extends Component {
 	constructor(props) {
@@ -12,20 +12,32 @@ export default class ToolbarButtonComponent extends Component {
 		return (
 			<TouchableHighlight
 				underlayColor="rgba(0,0,0,0)"
-				style={CommonStyleSheet.button}
+				style={styles.button}
 				onPress={this.props.onPress}
 			>
 				<View>
-					{
-						<this.props.svg
-							style={CommonStyleSheet.svgButton}
-							width={25}
-							height={25}
-						/>
-					}
-					<Text style={CommonStyleSheet.buttonText}>{this.props.text}</Text>
+					{<this.props.svg style={styles.svgButton} width={25} height={25} />}
+					<Text style={styles.buttonText}>{this.props.text}</Text>
 				</View>
 			</TouchableHighlight>
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	button: {
+		marginVertical: 4,
+		borderRadius: 5,
+		backgroundColor: "rgba(0, 0, 0, 0)",
+		alignSelf: "center"
+	},
+	buttonText: {
+		...CommonStyleSheet.text,
+		fontSize: 12,
+		textAlign: "center"
+	},
+	svgButton: {
+		color: foregroundColor,
+		alignSelf: "center"
+	}
+});
