@@ -16,6 +16,7 @@ import * as Location from "expo-location";
 import SaveTrackComponent from "./SaveTrackComponent";
 import SettingsComponent from "./SettingsComponent";
 import CommonStyleSheet from "../CommonStyleSheet";
+import { Settings } from "../Settings";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -37,59 +38,6 @@ export default class MapComponent extends Component {
 				this.setState({ tracks: JSON.parse(tracks) });
 			}
 		});
-
-		Location.watchPositionAsync(
-			{
-				accuracy: Location.Accuracy.Highest,
-				showsBackgroundLocationIndicator: true,
-				timeInterval: 5000,
-				activityType: Location.ActivityType.Fitness,
-				distanceInterval: 20
-			},
-			async (location) => {
-				let distanceThreshold = parseInt(
-					await AsyncStorage.getItem("distanceThreshold")
-				);
-
-				if (this.state.selectedTrackName != "" && this.state.notification) {
-					this.state.tracks
-						.filter((track) => track.name == this.state.selectedTrackName)
-						.forEach((track) => {
-							// Check starting point
-							let near =
-								distance(
-									location.coords.latitude,
-									location.coords.longitude,
-									track.segments[0].points[0].lat,
-									track.segments[0].points[0].lon
-								) <= distanceThreshold;
-							//Check end point
-							near =
-								near ||
-								distance(
-									location.coords.latitude,
-									location.coords.longitude,
-									track.segments[0].points[track.segments[0].points.length - 1]
-										.lat,
-									track.segments[0].points[track.segments[0].points.length - 1]
-										.lon
-								) <= distanceThreshold;
-							if (near) {
-								Alert.alert(
-									track.name,
-									"You are close to track " + track.name,
-									[
-										{
-											text: "Ok"
-										}
-									]
-								);
-								this.state.notification = false;
-							}
-						});
-				}
-			}
-		);
 	}
 
 	updateUserTrack(latitude, longitude) {
@@ -209,6 +157,58 @@ export default class MapComponent extends Component {
 					.finally(() => {
 						this.setState({ isLoading: false });
 					});
+				Location.watchPositionAsync(
+					{
+						accuracy: Location.Accuracy.Highest,
+						showsBackgroundLocationIndicator: true,
+						timeInterval: 5000,
+						activityType: Location.ActivityType.Fitness,
+						distanceInterval: 20
+					},
+					(location) => {
+						let distanceThreshold = Settings.distanceThreshold.get();
+
+						if (this.state.selectedTrackName != "" && this.state.notification) {
+							this.state.tracks
+								.filter((track) => track.name == this.state.selectedTrackName)
+								.forEach((track) => {
+									// Check starting point
+									let near =
+										distance(
+											location.coords.latitude,
+											location.coords.longitude,
+											track.segments[0].points[0].lat,
+											track.segments[0].points[0].lon
+										) <= distanceThreshold;
+									//Check end point
+									near =
+										near ||
+										distance(
+											location.coords.latitude,
+											location.coords.longitude,
+											track.segments[0].points[
+												track.segments[0].points.length - 1
+											].lat,
+											track.segments[0].points[
+												track.segments[0].points.length - 1
+											].lon
+										) <= distanceThreshold;
+									if (near) {
+										Alert.alert(
+											track.name,
+											"You are close to track " + track.name,
+											[
+												{
+													text: "Ok"
+												}
+											]
+										);
+										this.state.notification = false;
+									}
+								});
+						}
+					}
+				);
 			})
 			.catch(() => {
 				this.setState({ isLoading: false });

@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CommonStyleSheet, { foregroundColor } from "../CommonStyleSheet";
 import ToolbarButtonComponent from "./ToolbarButtonComponent";
 import SettingsButtonSvg from "../assets/settings-button.svg";
+import { Settings } from "../Settings";
 
 const maxDistanceThreshold = 2000;
 const distanceStepSize = 10;
@@ -21,20 +22,15 @@ export default class SettingsComponent extends Component {
 		this.state = {
 			modal: false,
 			settings: {
-				distanceThreshold: 1000
+				distanceThreshold: Settings.distanceThreshold.get()
 			}
 		};
 
-		//Read all settings from AsyncStorage
-		let distanceThresholdPromise = AsyncStorage.getItem("distanceThreshold");
-		Promise.all([distanceThresholdPromise]).then((values) => {
+		Settings.distanceThreshold.addListener((value) => {
+			console.log("Distance Threshold changed to " + value);
 			let settings = this.state.settings;
 
-			let distanceThreshold = parseInt(values[0]);
-			if (distanceThreshold !== NaN) {
-				settings.distanceThreshold = distanceThreshold;
-			}
-
+			settings.distanceThreshold = value;
 			this.setState({
 				settings
 			});
@@ -94,10 +90,7 @@ export default class SettingsComponent extends Component {
 											});
 										}}
 										onSlidingComplete={(value) => {
-											AsyncStorage.setItem(
-												"distanceThreshold",
-												this.state.settings.distanceThreshold.toString()
-											);
+											Settings.distanceThreshold.set(value);
 										}}
 									/>
 									<Text
