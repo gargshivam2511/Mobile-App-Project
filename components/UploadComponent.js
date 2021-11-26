@@ -28,7 +28,7 @@ export default class UploadComponent extends Component {
 			<ToolbarButtonComponent
 				text="Upload"
 				svg={UploadButtonSvg}
-				onPress={this.selectFile}
+				onPress={() => this.selectFile()}
 			/>
 		);
 	}
